@@ -14,13 +14,13 @@ export class Empresa extends Entity {
     type: 'string',
     required: true,
   })
-  razonSocial: string;
+  Razon_social: string;
 
   @property({
     type: 'string',
     required: true,
   })
-  nit: string;
+  Nit: string;
 
   @hasMany(() => Empleado)
   empleados: Empleado[];

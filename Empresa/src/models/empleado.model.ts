@@ -14,25 +14,19 @@ export class Empleado extends Entity {
     type: 'string',
     required: true,
   })
-  nombres: string;
+  nombre: string;
 
   @property({
     type: 'string',
     required: true,
   })
-  apellidos: string;
+  apellido: string;
 
   @property({
-    type: 'string',
+    type: 'number',
     required: true,
   })
-  telefono: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  direccion: string;
+  cedula: number;
 
   @property({
     type: 'string',
@@ -44,31 +38,19 @@ export class Empleado extends Entity {
     type: 'string',
     required: true,
   })
-  edad: string;
+  telefono: string;
 
   @property({
-    type: 'date',
+    type: 'string',
     required: true,
   })
-  fechaNacimiento: string;
+  cargo: string;
 
   @property({
     type: 'number',
     required: true,
   })
-  sueldo: number;
-
-  @property({
-    type: 'boolean',
-    required: true,
-  })
-  esDirectivo: boolean;
-
-  @property({
-    type: 'boolean',
-    required: true,
-  })
-  esCliente: boolean;
+  salario: number;
 
   @belongsTo(() => Empresa)
   empresaId: string;

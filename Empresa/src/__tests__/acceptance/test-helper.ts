@@ -1,4 +1,4 @@
-import {Sprint1Application} from '../..';
+import {EmpresaApplication} from '../..';
 import {
   createRestAppClient,
   givenHttpServerConfig,
@@ -14,7 +14,7 @@ export async function setupApplication(): Promise<AppWithClient> {
     // port: +process.env.PORT,
   });
 
-  const app = new Sprint1Application({
+  const app = new EmpresaApplication({
     rest: restConfig,
   });
 
@@ -27,6 +27,6 @@ export async function setupApplication(): Promise<AppWithClient> {
 }
 
 export interface AppWithClient {
-  app: Sprint1Application;
+  app: EmpresaApplication;
   client: Client;
 }

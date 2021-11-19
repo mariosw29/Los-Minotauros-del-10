@@ -12,7 +12,7 @@ import {MySequence} from './sequence';
 
 export {ApplicationConfig};
 
-export class Sprint1Application extends BootMixin(
+export class EmpresaApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
   constructor(options: ApplicationConfig = {}) {

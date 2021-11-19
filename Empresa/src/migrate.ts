@@ -1,10 +1,10 @@
-import {Sprint1Application} from './application';
+import {EmpresaApplication} from './application';
 
 export async function migrate(args: string[]) {
   const existingSchema = args.includes('--rebuild') ? 'drop' : 'alter';
   console.log('Migrating schemas (%s existing schema)', existingSchema);
 
-  const app = new Sprint1Application();
+  const app = new EmpresaApplication();
   await app.boot();
   await app.migrateSchema({existingSchema});
 
