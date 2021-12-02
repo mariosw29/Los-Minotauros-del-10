@@ -1,4 +1,4 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
 import {Empresa} from './empresa.model';
 
 @model()
@@ -51,6 +51,12 @@ export class Empleado extends Entity {
     required: true,
   })
   salario: number;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  clave: string;
 
   @belongsTo(() => Empresa)
   empresaId: string;

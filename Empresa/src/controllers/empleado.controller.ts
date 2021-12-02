@@ -1,35 +1,57 @@
-import { service } from '@loopback/core';
+import {service} from '@loopback/core';
 import {
-  ANY,
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, HttpErrors, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
-import {Empleado, Empresa} from '../models';
+import {Credenciales, Empleado} from '../models';
 import {EmpleadoRepository} from '../repositories';
-import { NotificacionesService } from '../services';
+import {AutenticacionService, NotificacionesService} from '../services';
 
 export class EmpleadoController {
   constructor(
     @repository(EmpleadoRepository)
-    public empleadoRepository : EmpleadoRepository,
+    public empleadoRepository: EmpleadoRepository,
     @service(NotificacionesService)
-    public notifica_empleado : NotificacionesService
-  ) {}
+    public notifica_empleado: NotificacionesService,
+    @service(AutenticacionService)
+    public servicioAutenticacion: AutenticacionService
+  ) { }
+
+
+  @post('/IdentificarEmpleado', {
+    responses: {
+      '200': {
+        description: "Identificación de Empleados"
+      }
+    }
+  })
+  async identificarEmpleado(
+    @requestBody() credenciales: Credenciales
+  ) {
+    let p = await this.servicioAutenticacion.IdentificarEmpleado(credenciales.usuario, credenciales.clave)
+    if (p) {
+      let token = this.servicioAutenticacion.GenerarTokenJWT(p);
+      return {
+        datos: {
+          nombre: p.nombre,
+          correo: p.email,
+          id: p.id
+        },
+        tk: token
+      }
+    } else {
+      throw new HttpErrors[401]("Datos Inválidos");
+    }
+  }
 
   @post('/empleados')
   @response(200, {
@@ -50,12 +72,22 @@ export class EmpleadoController {
     empleado: Omit<Empleado, 'id'>,
     //nombre: Omit<Empleado,'nombre'>,
     //apellido: Omit<Empleado,'apellido'>,
-  ): Promise<Empleado> {     
+  ): Promise<Empleado> {
     //let nombre = Empleado.nombre
     //let apellido = empleado.apellido
-    
+
     this.notifica_empleado.MensajesEmpleados(); // adición servicio
-    return this.empleadoRepository.create(empleado);
+    //return this.empleadoRepository.create(empleado);
+    let clave = this.servicioAutenticacion.GenerarClave(); // genera clave
+    let claveCifrada = this.servicioAutenticacion.CifrarClave(clave);
+    empleado.clave = claveCifrada;
+    let p = await this.empleadoRepository.create(empleado);
+
+    // Notificar al Usuario
+    let destino = empleado.email;
+    let asunto = 'Registro en la plataforma';
+    let contenido = `El empleado es: ${empleado.nombre}`;
+    return p;
   }
 
   @get('/empleados/count')
@@ -65,7 +97,7 @@ export class EmpleadoController {
   })
   async count(
     @param.where(Empleado) where?: Where<Empleado>,
-  ): Promise<Count> {    
+  ): Promise<Count> {
     return this.empleadoRepository.count(where);
   }
 
